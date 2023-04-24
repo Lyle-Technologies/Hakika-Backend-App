@@ -2,7 +2,9 @@ const Product = require("../models/productModel");
 
 const getProducts = async (req, res) => {
   try {
-    res.send("Products");
+    const filter = {}; // Empty filter means match all documents
+    const all = await Product.find(filter);
+    res.status(200).json(all);
   } catch (error) {
     console.log(error);
   }
