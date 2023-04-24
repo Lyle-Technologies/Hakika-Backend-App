@@ -1,6 +1,16 @@
-const express = require('express')
-const app = express()
-const port = 3000
+const express = require("express");
+const colors = require("colors");
+require("dotenv").config();
+const cors = require("cors");
+const { connectDB } = require("./config/db");
+const app = express();
+const port = 8000;
 
-app.get('/', (req, res) => res.send('Hello World!'))
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(port, () => console.log(`API running on port ${port}`));
+
+connectDB();
+
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(cors());
+app.use("/api/products", require("./routes/productsRoute"));
