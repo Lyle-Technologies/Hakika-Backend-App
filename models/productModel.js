@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+// Define the product schema model
+
 const productSchema = mongoose.Schema(
   {
     name: {
@@ -17,6 +19,10 @@ const productSchema = mongoose.Schema(
     price: {
       type: Number,
       required: true,
+    },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
     },
   },
   { timestamps: true }

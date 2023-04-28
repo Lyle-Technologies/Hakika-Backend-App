@@ -1,4 +1,5 @@
 const Product = require("../models/productModel");
+const Category = require("../models/categoryModel");
 
 const getProducts = async (req, res) => {
   try {
@@ -9,25 +10,28 @@ const getProducts = async (req, res) => {
   }
 };
 
-const singleProduct = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const product = await Product.findById(id);
-    res.json(product);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 const addProducts = async (req, res) => {
   try {
     const { name, imageLink, price, description } = req.body;
-    await Product.create({ name, imageLink, price, description });
-    res.status(201).json({ message: "Product Added Successfuly" });
+    const { categoryId } = req.params;
+    const targetedCategory = await Category.findById(categoryId);
+    if (!targetedCategory) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+    const newProduct = await Product.create({
+      name,
+      imageLink,
+      price,
+      description,
+      category: targetedCategory._id,
+    });
+    await newProduct.save();
+    targetedCategory.products.push(newProduct);
+    await targetedCategory.save();
+    res.status(201).json({ message: `${newProduct.name} Added Successfuly` });
   } catch (error) {
-    console.log(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = { getProducts, singleProduct, addProducts };
+module.exports = { getProducts, addProducts };

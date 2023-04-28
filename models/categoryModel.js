@@ -9,6 +9,16 @@ const categorySchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  categoryImageLink: {
+    type: String,
+    required: true,
+  },
+  products: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+    },
+  ],
 });
 
 module.exports = mongoose.model("Category", categorySchema);
