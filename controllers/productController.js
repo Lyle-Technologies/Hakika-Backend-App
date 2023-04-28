@@ -10,6 +10,21 @@ const getProducts = async (req, res) => {
   }
 };
 
+const eachCategoryProduct = async (req, res) => {
+  const { categoryId } = req.params;
+  try {
+    const targetedCategory = await Category.findById(categoryId).populate(
+      "products"
+    );
+    if (!targetedCategory) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    res.json(targetedCategory.products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 const singleProduct = async (req, res) => {
   const { id } = req.params;
@@ -46,4 +61,9 @@ const addProducts = async (req, res) => {
   }
 };
 
-module.exports = { getProducts, addProducts, singleProduct };
+module.exports = {
+  getProducts,
+  addProducts,
+  singleProduct,
+  eachCategoryProduct,
+};
