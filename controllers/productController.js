@@ -10,6 +10,18 @@ const getProducts = async (req, res) => {
   }
 };
 
+
+const singleProduct = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const product = await Product.findById(id);
+    res.json(product);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const addProducts = async (req, res) => {
   try {
     const { name, imageLink, price, description } = req.body;
@@ -34,4 +46,4 @@ const addProducts = async (req, res) => {
   }
 };
 
-module.exports = { getProducts, addProducts };
+module.exports = { getProducts, addProducts, singleProduct };
