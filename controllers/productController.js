@@ -44,6 +44,7 @@ const addProducts = async (req, res) => {
     //find the category based on the provided category name
 
     const category = await Category.findOne({ name: categories });
+    console.log(category);
 
     if (!category) {
       return res.status(400).json({ message: "Invalid category" });
@@ -52,7 +53,7 @@ const addProducts = async (req, res) => {
     const result = await cloudinary.uploader.upload(req.file.path);
 
     // Create the new product object
-    const product = await Product.create({
+    const product = new Product({
       name,
       description,
       price,
@@ -61,9 +62,12 @@ const addProducts = async (req, res) => {
     });
 
     // save the product details in the Database.
-    await product.save();
+    const createdProduct = await product.save();
+    if (createdProduct) {
+      category.products.push(createdProduct._id);
+    }
 
-    res.status(201).json(product);
+    res.status(201).json(createdProduct);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
