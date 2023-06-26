@@ -4,12 +4,13 @@ const {
   getProducts,
   addProducts,
   singleProduct,
-  eachCategoryProduct
+  eachCategoryProduct,
 } = require("../controllers/productController");
+const upload = require("../utils/multer");
 
 router.get("/products", getProducts);
 router.get("/products/:id", singleProduct);
-router.get("/:categoryId/products", eachCategoryProduct)
-router.post("/:categoryId/products", addProducts);
+router.get("/:categoryId/products", eachCategoryProduct);
+router.post("/products", upload.single("image"), addProducts);
 
 module.exports = router;

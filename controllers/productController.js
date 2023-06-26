@@ -1,5 +1,6 @@
 const Product = require("../models/productModel");
 const Category = require("../models/categoryModel");
+const cloudinary = require("../utils/cloudinary");
 
 const getProducts = async (req, res) => {
   try {
@@ -39,23 +40,30 @@ const singleProduct = async (req, res) => {
 
 const addProducts = async (req, res) => {
   try {
-    const { name, imageLink, price, description } = req.body;
-    const { categoryId } = req.params;
-    const targetedCategory = await Category.findById(categoryId);
-    if (!targetedCategory) {
-      return res.status(404).json({ message: "Category not found" });
+    const { categories, name, description, price } = req.body;
+    //find the category based on the provided category name
+
+    const category = await Category.findOne({ name: categories });
+
+    if (!category) {
+      return res.status(400).json({ message: "Invalid category" });
     }
-    const newProduct = await Product.create({
+    // Upload image to cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path);
+
+    // Create the new product object
+    const product = await Product.create({
       name,
-      imageLink,
-      price,
       description,
-      category: targetedCategory._id,
+      price,
+      category: category._id, // allocate the product with the resolved category
+      imageLink: result.secure_url,
     });
-    await newProduct.save();
-    targetedCategory.products.push(newProduct);
-    await targetedCategory.save();
-    res.status(201).json({ message: `${newProduct.name} Added Successfuly` });
+
+    // save the product details in the Database.
+    await product.save();
+
+    res.status(201).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
