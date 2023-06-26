@@ -44,7 +44,6 @@ const addProducts = async (req, res) => {
     //find the category based on the provided category name
 
     const category = await Category.findOne({ name: categories });
-    console.log(category);
 
     if (!category) {
       return res.status(400).json({ message: "Invalid category" });
@@ -62,12 +61,15 @@ const addProducts = async (req, res) => {
     });
 
     // save the product details in the Database.
-    const createdProduct = await product.save();
-    if (createdProduct) {
-      category.products.push(createdProduct._id);
-    }
 
-    res.status(201).json(createdProduct);
+    const savedProduct = await product.save();
+
+    category.products.push(savedProduct._id);
+
+    // saved the updated category
+    await category.save();
+
+    res.status(201).json(savedProduct);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
