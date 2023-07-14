@@ -38,35 +38,40 @@ const singleProduct = async (req, res) => {
   }
 };
 
-const addProducts = async (req, res) => {
+const uploadProduct = async (req, res) => {
   try {
-    const { categories, name, description, price } = req.body;
+    const { categories, title, description, price, phoneNumber } = req.body;
+
     //find the category based on the provided category name
 
     const category = await Category.findOne({ name: categories });
 
+    // console.log(category);
+
     if (!category) {
       return res.status(400).json({ message: "Invalid category" });
     }
-    // Upload image to cloudinary
-    const result = await cloudinary.uploader.upload(req.file.path);
+    // // Upload image to cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "Hakika Ecommerce",
+    });
 
-    // Create the new product object
+    // // Create the new product object
     const product = new Product({
-      name,
+      title,
       description,
       price,
       category: category._id, // allocate the product with the resolved category
       imageLink: result.secure_url,
     });
 
-    // save the product details in the Database.
+    // // save the product details in the Database.
 
     const savedProduct = await product.save();
 
     category.products.push(savedProduct._id);
 
-    // saved the updated category
+    // // // saved the updated category
     await category.save();
 
     res.status(201).json(savedProduct);
@@ -77,7 +82,7 @@ const addProducts = async (req, res) => {
 
 module.exports = {
   getProducts,
-  addProducts,
+  uploadProduct,
   singleProduct,
   eachCategoryProduct,
 };
