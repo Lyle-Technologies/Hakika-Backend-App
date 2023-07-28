@@ -15,5 +15,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use("/api", require("./routes/productsRoute"));
 app.use("/api/categories", require("./routes/categoryRoute"));
+app.use('/api/auth/users', require('./routes/users'))
 
 app.listen(port, () => console.log(`API running on port ${port}`));
