@@ -54,10 +54,10 @@ const verifyEmailToken = async (req, res) => {
         await User.updateOne({_id: user._id, verified: true})
         await Token.findByIdAndRemove(token._id)
 
-        res.status(200).send({message: 'Email verified Successfully!'})
+        return res.status(200).send({message: 'Email verified Successfully!'})
 
     } catch (error) {
-        res.status(500).send({message: 'Internal Server Error'})
+        return res.status(500).send({message: 'Internal Server Error'})
     }
 }
 
