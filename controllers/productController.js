@@ -22,19 +22,37 @@ const eachCategoryProduct = async (req, res) => {
     }
 
     res.json(targetedCategory.products);
+
+    console.log(targetedCategory);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-const singleProduct = async (req, res) => {
-  const { id } = req.params;
+const getProductsByCategory = async (req, res) => {
+  const { category } = req.params;
 
   try {
-    const product = await Product.findById(id);
+    const products = await Product.find({ category });
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const singleProduct = async (req, res) => {
+  const { productId } = req.params;
+
+  try {
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
     res.json(product);
   } catch (error) {
-    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -85,4 +103,5 @@ module.exports = {
   uploadProduct,
   singleProduct,
   eachCategoryProduct,
+  getProductsByCategory
 };
